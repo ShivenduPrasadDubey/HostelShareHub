@@ -55,11 +55,13 @@ const Feed = () => {
   const [searchedResults, setSearchedResults] = useState([]);
 
   const fetchPosts = async () => {
-    const response = await fetch("/api/prompt");
-    const data = await response.json(); 
+    const response = await fetch("/api/prompt", {
+      method: "GET",
+      cache: "no-store", // Force fetch without caching
+    });
+    const data = await response.json();
     setAllPosts(data);
   };
-
   useEffect(() => {
     fetchPosts();
   }, []);
