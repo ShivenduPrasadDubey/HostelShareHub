@@ -10,7 +10,7 @@ const UpdatePrompt = () => {
   const searchParams = useSearchParams();
   const promptId = searchParams.get("id");
 
-  const [post, setPost] = useState({ prompt: "", tag: "", number: "" });
+  const [post, setPost] = useState({ prompt: "", tag: "", number: "", roomNumber: "", hostelName: "" });
   const [submitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -22,6 +22,8 @@ const UpdatePrompt = () => {
         prompt: data.prompt,
         tag: data.tag,
         number: data.number,
+        roomNumber: data.roomNumber,
+        hostelName: data.hostelName,
       });
     };
 
@@ -41,6 +43,8 @@ const UpdatePrompt = () => {
           prompt: post.prompt,
           tag: post.tag,
           number: post.number,
+          roomNumber: data.roomNumber,
+          hostelName: data.hostelName,
         }),
       });
 

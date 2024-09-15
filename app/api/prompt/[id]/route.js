@@ -16,7 +16,7 @@ export const GET = async (request, { params }) => {
 }
 
 export const PATCH = async (request, { params }) => {
-    const { prompt, tag, number } = await request.json();
+    const { prompt, tag, number, roomNumber, hostelName } = await request.json();
 
     try {
         await connectToDB();
@@ -32,6 +32,8 @@ export const PATCH = async (request, { params }) => {
         existingPrompt.prompt = prompt;
         existingPrompt.tag = tag;
         existingPrompt.number = number;
+        existingPrompt.roomNumber = roomNumber;
+        existingPrompt.hostelName = hostelName;
         await existingPrompt.save();
 
         return new Response("Successfully updated the Prompts", { status: 200 });

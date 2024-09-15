@@ -17,6 +17,14 @@ const PromptSchema = new Schema({
     type: String,
     required: [true, 'Number is required.'],
   },
+  roomNumber: {
+    type: String,
+    required: [true, 'Room number is required!'],
+  },
+  hostelName: {
+    type: String,
+    required: [true, 'Hostel name is required!'],
+  }
 });
 
 const Prompt = models.Prompt || model('Prompt', PromptSchema);

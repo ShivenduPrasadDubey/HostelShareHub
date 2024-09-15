@@ -1,10 +1,36 @@
 "use client";
 
 import { useState, useEffect } from "react";
-
+import { useRouter } from "next/navigation";
 import PromptCard from "./PromptCard";
 
+
+
 const PromptCardList = ({ data, handleTagClick }) => {
+  const router = useRouter();
+  const handleEdit = (post) => {
+    router.push(`/update-prompt?id=${post._id}`);
+  };
+  
+  const handleDelete = async (post) => {
+    const hasConfirmed = confirm(
+      "Are you sure you want to delete this prompt?"
+    );
+  
+    if (hasConfirmed) {
+      try {
+        await fetch(`/api/prompt/${post._id.toString()}`, {
+          method: "DELETE",
+        });
+  
+        const filteredPosts = myPosts.filter((item) => item._id !== post._id);
+  
+        setMyPosts(filteredPosts);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
   return (
     <div className='mt-16 prompt_layout'>
       {data.map((post) => (
@@ -12,6 +38,8 @@ const PromptCardList = ({ data, handleTagClick }) => {
           key={post._id}
           post={post}
           handleTagClick={handleTagClick}
+          handleEdit={() => handleEdit && handleEdit(post)}
+          handleDelete={() => handleDelete && handleDelete(post)}
         />
       ))}
     </div>
@@ -20,7 +48,7 @@ const PromptCardList = ({ data, handleTagClick }) => {
 
 const Feed = () => {
   const [allPosts, setAllPosts] = useState([]);
-
+  const router = useRouter();
   // Search states
   const [searchText, setSearchText] = useState("");
   const [searchTimeout, setSearchTimeout] = useState(null);
@@ -28,8 +56,7 @@ const Feed = () => {
 
   const fetchPosts = async () => {
     const response = await fetch("/api/prompt");
-    const data = await response.json();
-
+    const data = await response.json(); 
     setAllPosts(data);
   };
 
@@ -37,16 +64,19 @@ const Feed = () => {
     fetchPosts();
   }, []);
 
-  const filterPrompts = (searchtext) => {
-    const regex = new RegExp(searchtext, "i"); // 'i' flag for case-insensitive search
+  const filterPrompts = (searchText) => {
+    const regex = new RegExp(searchText, "i"); // 'i' flag for case-insensitive search
     return allPosts.filter(
       (item) =>
-        regex.test(item.creator.username) ||
+        (item.creator?.username && regex.test(item.creator.username)) ||
         regex.test(item.tag) ||
-        regex.test(item.prompt)||
-        regex.test(item.number)
+        regex.test(item.prompt) ||
+        regex.test(item.number) ||
+        regex.test(item.roomNumber) ||
+        regex.test(item.hostelName) 
     );
   };
+  
 
   const handleSearchChange = (e) => {
     clearTimeout(searchTimeout);

@@ -8,7 +8,7 @@ const Form = ({ type, post, setPost, submitting, handleSubmit }) => {
         <span className='blue_gradient'>{type} Request</span>
       </h1>
       <p className='desc text-left max-w-md'>
-        {type} Request for fellow hostellers and help someone in need by clicking the whatsapp icon.
+        {type} Request for fellow hostellers and help someone in need by clicking the WhatsApp icon.
       </p>
 
       <form
@@ -19,7 +19,6 @@ const Form = ({ type, post, setPost, submitting, handleSubmit }) => {
           <span className='font-satoshi font-semibold text-base text-gray-700'>
             Your Request
           </span>
-
           <textarea
             value={post.prompt}
             onChange={(e) => setPost({ ...post, prompt: e.target.value })}
@@ -45,9 +44,10 @@ const Form = ({ type, post, setPost, submitting, handleSubmit }) => {
             className='form_input'
           />
         </label>
+
         <label>
           <span className='font-satoshi font-semibold text-base text-gray-700'>
-            Your Contact number
+            Your Contact Number
           </span>
           <input
             value={post.number}
@@ -59,11 +59,39 @@ const Form = ({ type, post, setPost, submitting, handleSubmit }) => {
           />
         </label>
 
+        {/* New Fields */}
+        <label>
+          <span className='font-satoshi font-semibold text-base text-gray-700'>
+            Room Number
+          </span>
+          <input
+            value={post.roomNumber}
+            onChange={(e) => setPost({ ...post, roomNumber: e.target.value })}
+            type='text'
+            placeholder='Room Number'
+            required
+            className='form_input'
+          />
+        </label>
+
+        <label>
+          <span className='font-satoshi font-semibold text-base text-gray-700'>
+            Hostel Name
+          </span>
+          <input
+            value={post.hostelName}
+            onChange={(e) => setPost({ ...post, hostelName: e.target.value })}
+            type='text'
+            placeholder='Hostel Name'
+            required
+            className='form_input'
+          />
+        </label>
+
         <div className='flex-end mx-3 mb-5 gap-4'>
           <Link href='/' className='text-gray-500 text-sm'>
             Cancel
           </Link>
-
           <button
             type='submit'
             disabled={submitting}
