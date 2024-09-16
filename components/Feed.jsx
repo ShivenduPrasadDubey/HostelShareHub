@@ -4,55 +4,12 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import PromptCard from "./PromptCard";
 
-
-
-const PromptCardList = ({ data, handleTagClick }) => {
-  const router = useRouter();
-  const handleEdit = (post) => {
-    router.push(`/update-prompt?id=${post._id}`);
-  };
-  
-  const handleDelete = async (post) => {
-    const hasConfirmed = confirm(
-      "Are you sure you want to delete this prompt?"
-    );
-  
-    if (hasConfirmed) {
-      try {
-        await fetch(`/api/prompt/${post._id.toString()}`, {
-          method: "DELETE",
-        });
-  
-        const filteredPosts = myPosts.filter((item) => item._id !== post._id);
-  
-        setMyPosts(filteredPosts);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  };
-  return (
-    <div className='mt-16 prompt_layout'>
-      {data.map((post) => (
-        <PromptCard
-          key={post._id}
-          post={post}
-          handleTagClick={handleTagClick}
-          handleEdit={() => handleEdit && handleEdit(post)}
-          handleDelete={() => handleDelete && handleDelete(post)}
-        />
-      ))}
-    </div>
-  );
-};
-
 const Feed = () => {
   const [allPosts, setAllPosts] = useState([]);
-  const router = useRouter();
-  // Search states
   const [searchText, setSearchText] = useState("");
   const [searchTimeout, setSearchTimeout] = useState(null);
   const [searchedResults, setSearchedResults] = useState([]);
+  const router = useRouter();
 
   const fetchPosts = async () => {
     const response = await fetch("/api/prompt", {
@@ -62,6 +19,7 @@ const Feed = () => {
     const data = await response.json();
     setAllPosts(data);
   };
+
   useEffect(() => {
     fetchPosts();
   }, []);
@@ -75,10 +33,9 @@ const Feed = () => {
         regex.test(item.prompt) ||
         regex.test(item.number) ||
         regex.test(item.roomNumber) ||
-        regex.test(item.hostelName) 
+        regex.test(item.hostelName)
     );
   };
-  
 
   const handleSearchChange = (e) => {
     clearTimeout(searchTimeout);
@@ -95,10 +52,31 @@ const Feed = () => {
 
   const handleTagClick = (tagName) => {
     setSearchText(tagName);
-
     const searchResult = filterPrompts(tagName);
     setSearchedResults(searchResult);
   };
+
+  const handleEdit = (post) => {
+    router.push(`/update-prompt?id=${post._id}`);
+  };
+
+  const handleDelete = async (post) => {
+    const hasConfirmed = confirm("Are you sure you want to delete this prompt?");
+    if (hasConfirmed) {
+      try {
+        await fetch(`/api/prompt/${post._id.toString()}`, {
+          method: "DELETE",
+        });
+
+        const filteredPosts = allPosts.filter((item) => item._id !== post._id);
+        setAllPosts(filteredPosts);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  const postsToDisplay = searchText ? searchedResults : allPosts;
 
   return (
     <section className='feed'>
@@ -113,15 +91,17 @@ const Feed = () => {
         />
       </form>
 
-      {/* All Prompts */}
-      {searchText ? (
-        <PromptCardList
-          data={searchedResults}
-          handleTagClick={handleTagClick}
-        />
-      ) : (
-        <PromptCardList data={allPosts} handleTagClick={handleTagClick} />
-      )}
+      <div className='mt-16 prompt_layout'>
+        {postsToDisplay.map((post) => (
+          <PromptCard
+            key={post._id}
+            post={post}
+            handleTagClick={handleTagClick}
+            handleEdit={() => handleEdit(post)}
+            handleDelete={() => handleDelete(post)}
+          />
+        ))}
+      </div>
     </section>
   );
 };
